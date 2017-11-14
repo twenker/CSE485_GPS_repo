@@ -8,6 +8,10 @@ from time import *
 import time
 import threading
 
+# used in gps_plotter and xl_writer
+import gmplot
+import xlwt
+
 # import functions from xl_writer and gpsPlotter
 from xl_writer import excelWriter
 from gps_plotter import *
