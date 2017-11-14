@@ -8,6 +8,10 @@ from time import *
 import time
 import threading
 
+# import functions from xl_writer and gpsPlotter
+from xl_writer import excelWriter
+from gps_plotter import *
+
 gpsd = None #seting the global variable
 
 os.system('clear') #clear the terminal (optional)
@@ -27,11 +31,13 @@ class GpsPoller(threading.Thread):
 
 if __name__ == '__main__':
   gpsp = GpsPoller() # create the thread
+  gps_data = [] # create list to store lists. [lat,lng,speed,time]
   try:
     gpsp.start() # start it up
     while True:
       #It may take a second or two to get good data
       #print gpsd.fix.latitude,', ',gpsd.fix.longitude,'  Time: ',gpsd.utc
+      data = [] # temp list that will be appended to gps_data
 
       os.system('clear')
 
@@ -53,10 +59,25 @@ if __name__ == '__main__':
       print
       print 'sats        ' , gpsd.satellites
 
+      # store gps data into data, append into gps_data
+      data[0] = gpsd.fix.latitude
+      data[1] = gpsd.fix.longitude
+      data[2] = gpsd.fix.speed
+      data[3] = gpsd.fix.time
+
+      gps_data.append(data)
+
       time.sleep(5) #set to whatever
 
   except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
     print "\nKilling Thread..."
     gpsp.running = False
     gpsp.join() # wait for the thread to finish what it's doing
+
+    # now that the gps is off, we can call gpsPlotter and
+    # excelWriter
+    # TODO: filename and setup just temp
+    gpsPlotter('temp',gps_data, [gps_data[0] for i in (0,1) + 16])
+    excelWriter('temp', gps_data)
+
   print "Done.\nExiting."
