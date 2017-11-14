@@ -2,6 +2,22 @@
 # to an excel spreedsheet
 
 import xlwt
+import csv
+
+# !!!NEW!!! way to write to excel file using csv files.
+# filename without extension. Data 2d list [lat,lng,speed,time]
+def csvWriter(filename, data):
+    # open file
+    with open(filename + '.csv', "wb") as csv_file:
+            writer = csv.writer(csv_file,delimiter=',')
+            header = ['Latitude','Longitude','Speed','Time']
+            writer.writerow(header)
+            for line in data:
+                writer.writerow(line)
+
+### <OLD> ###
+### csv is a simpler file to read and write to. This still works
+### though with xlx files though
 
 # recieve filename and 2d list of gps data
 # data should be in format: [Latitude, Longitude, Speed, Time]
@@ -30,8 +46,10 @@ def excelWriter(filename, data):
     # save workbook using filename. .xlx appended
     workbook.save(filename + '.xlx')
 
+### </OLD> ###
+
 if __name__ == '__main__':
 
     data = [[1,2,3,4], [1,2,3,4]]
 
-    excelWriter('temp',data)
+    csvWriter('temp',data)

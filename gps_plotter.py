@@ -1,20 +1,34 @@
 # receives a 2d list of coordinates and plots them using google maps.
-# The gmplot python module seems like a good choice
-
-# collection of example plots
-
-# plot(lat_list,lng_list, color, width). Just creates a line
-# between points
-# gmap.plot(lats, lngs, 'cornflowerblue', edge_width=10)
-
-# scatter(lat_list,lng_list,color,size,marker). creates markers
-# on the points
-#gmap.scatter(lats, lngs, '#3B0B39', size=40, marker=False)
-#gmap.scatter(lats, lngs, 'k', marker=True)
-
-#gmap.heatmap(heat_lats, heat_lngs)
+# The simplekml python module seems like a good choice. The maps
+# need to be imported on My Maps though.
 
 import gmplot
+import simplekml
+
+# !!!NEW!!! way to write to google maps. Creates KML files instead
+# of html. Opened on Google maps. I dunno if this is preferable
+# but whatever.
+# filename doesnt need extension.
+# data 2d list: [lat,lng,speed,time]
+def kmlPlotter(filename,data):
+    # create kml object
+    kml = simplekml.Kml()
+
+    # iterate through each list in data
+    for i in data:
+        # name is curently speed,time
+        point_name = str(i[2]) + ',' + (str(i[3]))
+        # coords is in the format longitude,latitude instead
+        # of latitude,longitude because fuck you
+        kml.newpoint(name=point_name, coords=[(i[1],i[0])])
+
+    # save kml
+    kml.save(filename + '.kml')
+
+### <OLD> ###
+### Old stuff that uses gmplot to create an html file. It works
+### but there doesn't seem to be a way to label markers which
+### is pretty important
 
 # receive 2d list and return list of lats (which should be in
 # position 0 of lists in data)
@@ -40,31 +54,15 @@ def gpsPlotter(filename, data, setup):
     # write gmap to file
     gmap.draw(filename + '.html')
 
+### </OLD> ###
+
 if __name__ == '__main__':
-    # creates a GoogleMapPlotter object named gmap with center lat 37.428,
-    # center lng -122.145, and zoom 9
-    # gmap = gmplot.GoogleMapPlotter(37.428, -122.145, 9)
-
     # just example data
-    setup = [37.428,-122.145,14]
 
-    data = [[37.42,-122.145,0,0],
-            [37.418,-122.144,0,0],
-            [37.414,-122.140,0,0]]
+    data = [[33.46211,-112.42335,0,0],
+            [33.46225,-112.41806,1,1],
+            [33.46137,-112.40798,2,2]]
 
     filename = "temp"
 
-    gpsPlotter(filename,data,setup)
-
-    # collection of example plots
-
-    # plot(lat_list,lng_list, color, width). Just creates a line
-    # between points
-    # gmap.plot(lats, lngs, 'cornflowerblue', edge_width=10)
-
-    # scatter(lat_list,lng_list,color,size,marker). creates markers
-    # on the points
-    #gmap.scatter(lats, lngs, '#3B0B39', size=40, marker=False)
-    #gmap.scatter(lats, lngs, 'k', marker=True)
-
-    #gmap.heatmap(heat_lats, heat_lngs)
+    kmlPlotter(filename,data)

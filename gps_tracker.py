@@ -10,10 +10,12 @@ import threading
 
 # used in gps_plotter and xl_writer
 import gmplot
+import simplekml
 import xlwt
+import csv
 
 # import functions from xl_writer and gpsPlotter
-from xl_writer import excelWriter
+from xl_writer import *
 from gps_plotter import *
 
 gpsd = None #seting the global variable
@@ -71,6 +73,7 @@ if __name__ == '__main__':
 
       gps_data.append(data)
 
+      # TODO: set sleep to something better
       time.sleep(5) #set to whatever
 
   except (KeyboardInterrupt, SystemExit): #when you press ctrl+c
@@ -78,10 +81,10 @@ if __name__ == '__main__':
     gpsp.running = False
     gpsp.join() # wait for the thread to finish what it's doing
 
-    # now that the gps is off, we can call gpsPlotter and
-    # excelWriter
-    # TODO: filename and setup just temp
-    gpsPlotter('temp',gps_data, [gps_data[0] for i in (0,1) + 16])
-    excelWriter('temp', gps_data)
+    # now that the gps is off, we can call kmllPlotter and
+    # csvWriter
+    # TODO: filename. From stdin or command line arg
+    csvWriter('temp', gps_data)
+    kmlPlotter('temp',gps_data)
 
   print "Done.\nExiting."
