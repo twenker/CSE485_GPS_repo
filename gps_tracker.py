@@ -23,6 +23,7 @@ gpsd = None #seting the global variable
 os.system('clear') #clear the terminal (optional)
 
 class GpsPoller(threading.Thread):
+  # when gps is created
   def __init__(self):
     threading.Thread.__init__(self)
     global gpsd #bring it in scope
@@ -38,6 +39,9 @@ class GpsPoller(threading.Thread):
 if __name__ == '__main__':
   gpsp = GpsPoller() # create the thread
   gps_data = [] # create list to store lists. [lat,lng,speed,time]
+  # get filename from user
+  filename = raw_input('Enter file name without extension: ')
+
   try:
     gpsp.start() # start it up
     while True:
@@ -85,6 +89,8 @@ if __name__ == '__main__':
     # csvWriter
     # TODO: filename. From stdin or command line arg
     csvWriter('temp', gps_data)
+    print filename + '.csv written.'
     kmlPlotter('temp',gps_data)
+    print filename + '.kml written.'
 
   print "Done.\nExiting."
